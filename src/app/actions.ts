@@ -3,7 +3,7 @@
 import webpush from 'web-push';
 
 webpush.setVapidDetails(
-  'https://google.com',
+  'https://nextjs-web-push-delta.vercel.app',
   'BAAeJB3fBTvI1atDsWQ36qKgnF8AACUK9w_cxH8MUWak4bKmBqKkhbC88D9THuap65S2RGz4_PkrljlyhyIX1oU',
   'Kb_me2j69SiDVoJdhM4vp5xg4XQpUbAW64OomLoZY_k'
 );
