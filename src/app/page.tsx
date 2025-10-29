@@ -79,8 +79,29 @@ export default function Home() {
       return;
     }
 
+    if (!subscription) {
+      alert('No subscription available. Please subscribe first.');
+      return;
+    }
+
     try {
-      const result = await sendNotification(message);
+      // Serialize subscription to plain object
+      const subscriptionData = {
+        endpoint: subscription.endpoint,
+        keys: {
+          p256dh: btoa(
+            String.fromCharCode(
+              ...new Uint8Array(subscription.getKey('p256dh')!)
+            )
+          ),
+          auth: btoa(
+            String.fromCharCode(...new Uint8Array(subscription.getKey('auth')!))
+          ),
+        },
+      };
+
+      const result = await sendNotification(message, subscriptionData);
+      console.log('result', result);
       if (result.success) {
         setMessage('');
         alert('Notification sent successfully!');

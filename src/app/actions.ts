@@ -8,42 +8,41 @@ webpush.setVapidDetails(
   'Kb_me2j69SiDVoJdhM4vp5xg4XQpUbAW64OomLoZY_k'
 );
 
-let subscription: PushSubscription | null = null;
-
-export async function subscribeUser(sub: PushSubscription) {
-  subscription = sub;
+export async function subscribeUser(_sub: PushSubscription) {
   // In a production environment, you would want to store the subscription in a database
-  // For example: await db.subscriptions.create({ data: sub })
+  // For example: await db.subscriptions.create({ data: _sub })
   return { success: true };
 }
 
 export async function unsubscribeUser() {
-  subscription = null;
   // In a production environment, you would want to remove the subscription from the database
   // For example: await db.subscriptions.delete({ where: { ... } })
   return { success: true };
 }
 
-export async function sendNotification(message: string) {
-  if (!subscription) {
+export async function sendNotification(
+  message: string,
+  subscriptionData: {
+    endpoint: string;
+    keys: {
+      p256dh: string;
+      auth: string;
+    };
+  }
+) {
+  if (!subscriptionData) {
     throw new Error('No subscription available');
   }
 
-  console.log('subscription', subscription);
+  console.log('subscription', subscriptionData);
 
   try {
     await webpush.sendNotification(
       {
-        endpoint: subscription.endpoint,
+        endpoint: subscriptionData.endpoint,
         keys: {
-          p256dh: btoa(
-            String.fromCharCode(
-              ...new Uint8Array(subscription.getKey('p256dh')!)
-            )
-          ),
-          auth: btoa(
-            String.fromCharCode(...new Uint8Array(subscription.getKey('auth')!))
-          ),
+          p256dh: subscriptionData.keys.p256dh,
+          auth: subscriptionData.keys.auth,
         },
       },
       JSON.stringify({
